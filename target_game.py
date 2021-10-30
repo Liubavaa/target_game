@@ -1,4 +1,6 @@
 from typing import List
+import random
+import string
 
 
 def generate_grid() -> List[List[str]]:
@@ -6,7 +8,11 @@ def generate_grid() -> List[List[str]]:
     Generates list of lists of letters - i.e. grid for the game.
     e.g. [['I', 'G', 'E'], ['P', 'I', 'S'], ['W', 'M', 'G']]
     """
-    pass
+    grid = [[], [], []]
+    for i in range(3):
+        for _ in range(3):
+            grid[i].append(random.choice(string.ascii_uppercase))
+    return grid
 
 
 def get_words(f: str, letters: List[str]) -> List[str]:
