@@ -1,6 +1,7 @@
 from typing import List
 import random
 import string
+import atexit
 
 
 def generate_grid() -> List[List[str]]:
@@ -53,7 +54,16 @@ def get_user_words() -> List[str]:
     Gets words from user input and returns a list with these words.
     Usage: enter a word or press ctrl+d to finish.
     """
-    pass
+    def print_word():
+        return user_words
+    user_words = []
+    a = 1
+    try:
+        while a:
+            user_words.append(str(input()))
+    except EOFError:
+        a = 0
+    atexit.register(print_word)
 
 
 def get_pure_user_words(user_words: List[str], letters: List[str], words_from_dict: List[str]) -> List[str]:
