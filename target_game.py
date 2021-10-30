@@ -13,7 +13,7 @@ def get_words(f: str, letters: List[str]) -> List[str]:
     """
     Reads the file f. Checks the words with rules and returns a list of words.
     >>> get_words('en.txt', ['e', 'm', 'x', 'p', 'w', 'z', 'w', 'p', 'i'])
-    []
+    ['mew', 'pew', 'wem', 'wim', 'wime', 'wipe', 'wiz']
     """
     letter = letters[4]
     word_list = []
@@ -27,8 +27,19 @@ def get_words(f: str, letters: List[str]) -> List[str]:
                 idx = word_list.index(word)
                 word_list[idx] = 0
                 break
+    for word in word_list:
+        if word != 0:
+            word_tuple_list = []
+            for char in word:
+                if (char, word.count(char)) not in word_tuple_list:
+                    word_tuple_list.append((char, word.count(char)))
+            for char_amount in word_tuple_list:
+                if char_amount[1] > letters.count(char_amount[0]):
+                    idx = word_list.index(word)
+                    word_list[idx] = 0
+                    break
     word_list = [i for i in word_list if i]
-    print(word_list)
+    return word_list
 
 
 def get_user_words() -> List[str]:
