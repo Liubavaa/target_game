@@ -16,12 +16,19 @@ def get_words(f: str, letters: List[str]) -> List[str]:
     []
     """
     letter = letters[4]
-    word_center = []
+    word_list = []
     with open(f, "r") as dictionary:
         for word in dictionary:
             if letter in word and len(word) > 3:
-                word_center.append(word)
-    print(word_center)
+                word_list.append(word[:-1])
+    for word in word_list:
+        for char in word:
+            if char not in letters:
+                idx = word_list.index(word)
+                word_list[idx] = 0
+                break
+    word_list = [i for i in word_list if i]
+    print(word_list)
 
 
 def get_user_words() -> List[str]:
