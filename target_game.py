@@ -29,27 +29,16 @@ def get_words(path: str, letters: List[str]) -> List[str]:
     word_list = []
     with open(path, "r", encoding='UTF-8') as dictionary:
         for word in dictionary:
-            if letter in word and len(word) > 4:
-                word_list.append(word[:-1])
-        dictionary.close()
-    for word in word_list:
-        for char in word:
-            if char not in letters:
-                idx = word_list.index(word)
-                word_list[idx] = 0
-                break
-    for word in word_list:
-        if word != 0:
-            word_tuple_list = []
-            for char in word:
-                if (char, word.count(char)) not in word_tuple_list:
-                    word_tuple_list.append((char, word.count(char)))
-            for char_amount in word_tuple_list:
-                if char_amount[1] > letters.count(char_amount[0]):
-                    idx = word_list.index(word)
-                    word_list[idx] = 0
-                    break
-    word_list = [i for i in word_list if i]
+            word = word[:-1]
+            if letter in word and len(word) > 3:
+                if all(char in letters for char in word):
+                    word_tuple_list = []
+                    for char in word:
+                        if (char, word.count(char)) not in word_tuple_list:
+                            word_tuple_list.append((char, word.count(char)))
+                    if all(char_a_amount[1] <= letters.count(char_a_amount[0])
+                           for char_a_amount in word_tuple_list):
+                        word_list.append(word)
     return word_list
 
 
@@ -76,29 +65,19 @@ def get_pure_user_words(user_words: List[str], letters: List[str],
     ['xemw']
     """
     letter = letters[4]
+    pure_words = []
     for word in user_words:
-        if word in words_from_dict or letter not in word or len(word) < 4:
-            idx = user_words.index(word)
-            user_words[idx] = 0
-        else:
-            for char in word:
-                if char not in letters:
-                    idx = user_words.index(word)
-                    user_words[idx] = 0
-                    break
-    for word in user_words:
-        if word != 0:
-            word_tuple_list = []
-            for char in word:
-                if (char, word.count(char)) not in word_tuple_list:
-                    word_tuple_list.append((char, word.count(char)))
-            for char_amount in word_tuple_list:
-                if char_amount[1] > letters.count(char_amount[0]):
-                    idx = user_words.index(word)
-                    user_words[idx] = 0
-                    break
-    user_pure_words = [i for i in user_words if i]
-    return user_pure_words
+        if letter in word and len(word) > 3:
+            if all(char in letters for char in word):
+                word_tuple_list = []
+                for char in word:
+                    if (char, word.count(char)) not in word_tuple_list:
+                        word_tuple_list.append((char, word.count(char)))
+                if all(char_a_amount[1] <= letters.count(char_a_amount[0])
+                       for char_a_amount in word_tuple_list):
+                    if word not in words_from_dict:
+                        pure_words.append(word)
+    return pure_words
 
 
 def results():
@@ -112,7 +91,7 @@ def results():
 
     result = 0
     user_words = get_user_words()
-    words_from_dict = get_words('en.txt', letters)
+    words_from_dict = get_words('en', letters)
     for word in user_words:
         if word in words_from_dict:
             result += 1
