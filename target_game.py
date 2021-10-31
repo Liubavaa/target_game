@@ -1,7 +1,10 @@
+"""
+for God's sake, lets finish it
+"""
 from typing import List
 import random
 import string
-import atexit
+import sys
 
 
 def generate_grid() -> List[List[str]]:
@@ -16,7 +19,7 @@ def generate_grid() -> List[List[str]]:
     return grid
 
 
-def get_words(f: str, letters: List[str]) -> List[str]:
+def get_words(path: str, letters: List[str]) -> List[str]:
     """
     Reads the file f. Checks the words with rules and returns a list of words.
     >>> get_words('en.txt', ['e', 'm', 'x', 'p', 'w', 'z', 'w', 'p', 'i'])
@@ -24,10 +27,11 @@ def get_words(f: str, letters: List[str]) -> List[str]:
     """
     letter = letters[4]
     word_list = []
-    with open(f, "r") as dictionary:
+    with open(path, "r", encoding='UTF-8') as dictionary:
         for word in dictionary:
             if letter in word and len(word) > 4:
                 word_list.append(word[:-1])
+        dictionary.close()
     for word in word_list:
         for char in word:
             if char not in letters:
@@ -54,25 +58,21 @@ def get_user_words() -> List[str]:
     Gets words from user input and returns a list with these words.
     Usage: enter a word or press ctrl+d to finish.
     """
-    def print_word():
-        return user_words
     user_words = []
-    a = 1
-    try:
-        while a:
-            user_words.append(str(input()))
-    except EOFError:
-        a = 0
-    atexit.register(print_word)
+    for line in sys.stdin:
+        user_words += [line]
+    return user_words
 
 
-def get_pure_user_words(user_words: List[str], letters: List[str], words_from_dict: List[str]) -> List[str]:
+def get_pure_user_words(user_words: List[str], letters: List[str],
+                        words_from_dict: List[str]) -> List[str]:
     """
     (list, list, list) -> list
 
     Checks user words with the rules and returns list of those words
     that are not in dictionary.
-    >>> get_pure_user_words(['wipe', 'miw', 'wim', 'mipp', 'xemw'], ['e', 'm', 'x', 'p', 'w', 'z', 'w', 'p', 'i'], ['wime', 'wipe'])
+    >>> get_pure_user_words(['wipe', 'miw', 'wim', 'mipp', 'xemw'],\
+    ['e', 'm', 'x', 'p', 'w', 'z', 'w', 'p', 'i'], ['wime', 'wipe'])
     ['xemw']
     """
     letter = letters[4]
@@ -109,7 +109,6 @@ def results():
     for char_3 in generate_grid():
         for char in char_3:
             letters.append(str(char).lower())
-    return letters
 
     result = 0
     user_words = get_user_words()
@@ -124,5 +123,12 @@ def results():
             non_written_words.append(word)
 
     pure_words = get_pure_user_words(user_words, letters, words_from_dict)
+
+    with open('result.txt', 'w', encoding='UTF-8') as result_file:
+        result_file.writelines(result)
+        result_file.writelines(words_from_dict)
+        result_file.writelines(non_written_words)
+        result_file.writelines(pure_words)
+    result_file.close()
 
     return result, words_from_dict, non_written_words, pure_words
