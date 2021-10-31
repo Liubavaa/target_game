@@ -20,13 +20,13 @@ def get_words(f: str, letters: List[str]) -> List[str]:
     """
     Reads the file f. Checks the words with rules and returns a list of words.
     >>> get_words('en.txt', ['e', 'm', 'x', 'p', 'w', 'z', 'w', 'p', 'i'])
-    ['mew', 'pew', 'wem', 'wim', 'wime', 'wipe', 'wiz']
+    ['wime', 'wipe']
     """
     letter = letters[4]
     word_list = []
     with open(f, "r") as dictionary:
         for word in dictionary:
-            if letter in word and len(word) > 3:
+            if letter in word and len(word) > 4:
                 word_list.append(word[:-1])
     for word in word_list:
         for char in word:
@@ -72,8 +72,33 @@ def get_pure_user_words(user_words: List[str], letters: List[str], words_from_di
 
     Checks user words with the rules and returns list of those words
     that are not in dictionary.
+    >>> get_pure_user_words(['wipe', 'miw', 'wim', 'mipp', 'xemw'], ['e', 'm', 'x', 'p', 'w', 'z', 'w', 'p', 'i'], ['wime', 'wipe'])
+    ['xemw']
     """
-    pass
+    letter = letters[4]
+    for word in user_words:
+        if word in words_from_dict or letter not in word or len(word) < 4:
+            idx = user_words.index(word)
+            user_words[idx] = 0
+        else:
+            for char in word:
+                if char not in letters:
+                    idx = user_words.index(word)
+                    user_words[idx] = 0
+                    break
+    for word in user_words:
+        if word != 0:
+            word_tuple_list = []
+            for char in word:
+                if (char, word.count(char)) not in word_tuple_list:
+                    word_tuple_list.append((char, word.count(char)))
+            for char_amount in word_tuple_list:
+                if char_amount[1] > letters.count(char_amount[0]):
+                    idx = user_words.index(word)
+                    user_words[idx] = 0
+                    break
+    user_pure_words = [i for i in user_words if i]
+    return user_pure_words
 
 
 def results():
