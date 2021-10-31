@@ -102,4 +102,27 @@ def get_pure_user_words(user_words: List[str], letters: List[str], words_from_di
 
 
 def results():
-    pass
+    """
+    Return amount of correct words, dictionary words, non written correct words, pure words
+    """
+    letters = []
+    for char_3 in generate_grid():
+        for char in char_3:
+            letters.append(str(char).lower())
+    return letters
+
+    result = 0
+    user_words = get_user_words()
+    words_from_dict = get_words('en.txt', letters)
+    for word in user_words:
+        if word in words_from_dict:
+            result += 1
+
+    non_written_words = []
+    for word in words_from_dict:
+        if word not in user_words:
+            non_written_words.append(word)
+
+    pure_words = get_pure_user_words(user_words, letters, words_from_dict)
+
+    return result, words_from_dict, non_written_words, pure_words
