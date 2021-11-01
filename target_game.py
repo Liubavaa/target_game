@@ -22,14 +22,14 @@ def generate_grid() -> List[List[str]]:
 def get_words(path: str, letters: List[str]) -> List[str]:
     """
     Reads the file f. Checks the words with rules and returns a list of words.
-    >>> get_words('en', ['e', 'm', 'x', 'p', 'w', 'z', 'w', 'p', 'i'])
+    >>> get_words('en.txt', ['e', 'm', 'x', 'p', 'w', 'z', 'w', 'p', 'i'])
     ['wime', 'wipe']
     """
     letter = letters[4]
     word_list = []
     with open(path, "r", encoding='UTF-8') as dictionary:
         for word in dictionary:
-            word = word[:-1]
+            word = word[:-1].lower()
             if letter in word and len(word) > 3:
                 if all(char in letters for char in word):
                     word_tuple_list = []
