@@ -1,5 +1,7 @@
 from typing import List
 import random
+import urllib.request
+import re
 import string
 import sys
 
@@ -21,29 +23,33 @@ def generate_grid() -> List[List[str]]:
     return grid
 
 
-def get_words(path: str, letters: List[str]) -> List[str]:
+def get_words(path: str, letters: List[str]):
     """
-    Reads the file f. Checks the words with rules and returns a list of words.
-    >>> get_words('view.html', ['e', 'm', 'x', 'p', 'w', 'z', 'w', 'p', 'i'])
-    ['wime', 'wipe']
-
-    letter = letters[4]
-    word_list = []
-    with open(path, "r", encoding='UTF-8') as dictionary:
-        for word in dictionary:
-            word = word[:-1].lower()
-            if letter in word and len(word) > 3:
-                if all(char in letters for char in word):
-                    word_tuple_list = []
-                    for char in word:
-                        if (char, word.count(char)) not in word_tuple_list:
-                            word_tuple_list.append((char, word.count(char)))
-                    if all(char_a_amount[1] <= letters.count(char_a_amount[0])
-                           for char_a_amount in word_tuple_list):
-                        word_list.append(word)
-    return word_list
+    Reads the file and checks the words with rules and returns a list of words and their part of language.
+    >>> get_words('https://raw.githubusercontent.com/brown-uk/dict_uk/master/data/dict/base.lst',\
+                    ['й', 'й', 'й', 'й', 'й'])
+    [('йняти', 'verb'), ('йог', 'noun'), ('йога', 'noun'), ('йод', 'noun'), ('йодат', 'noun'), ('йодид', 'noun'),\
+ ('йодил', 'noun'), ('йодит', 'noun'), ('йодль', 'noun'), ('йола', 'noun'), ('йолоп', 'noun'), ('йомен', 'noun'),\
+ ('йон', 'noun'), ('йорж', 'noun'), ('йорж', 'noun'), ('йорк', 'noun'), ('йот', 'noun'), ('йота', 'noun'),\
+ ('йти', 'verb'), ('йтися', 'verb')]
     """
-    pass
+    result = []
+    with urllib.request.urlopen(path) as total_txt:
+        whole_list = re.findall(r"\n\w+ /n|\n\w+ /v|\n\w+ /adj|\n\w+ adv|\n\w+ n|\n\w+ v|\n\w+ adj|\n\w+ noun",
+                                total_txt.read().decode('utf8'))
+        for line in whole_list:
+            word = line.split()[0]
+            if len(word) < 6:
+                if line[1] in letters:
+                    if 'n' in line:
+                        result.append((word, 'noun'))
+                    elif 'adv' in line:
+                        result.append((word, 'adverb'))
+                    elif 'v' in line:
+                        result.append((word, 'verb'))
+                    elif 'adj' in line:
+                        result.append((word, 'adjective'))
+    return result
 
 
 def get_pure_user_words(user_words: List[str], letters: List[str],
