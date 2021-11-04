@@ -4,7 +4,6 @@ and is in corresponding part of language
 """
 from typing import List
 import random
-import urllib.request
 import re
 
 
@@ -35,10 +34,10 @@ def get_words(path: str, letters: List[str]):
  ('йорк', 'noun'), ('йот', 'noun'), ('йота', 'noun'), ('йти', 'verb'), ('йтися', 'verb')]
     """
     result = []
-    with urllib.request.urlopen(path) as total_txt:
+    with open(path, 'r', encoding='UTF-8') as total_txt:
         whole_list = re.findall(
             r'\n\w+ /n|\n\w+ /v|\n\w+ /adj|\n\w+ adv|\n\w+ n|\n\w+ v|\n\w+ adj|\n\w+ noun',
-            total_txt.read().decode('utf8')
+            total_txt.read()
         )
         for line in whole_list:
             word = line.split()[0]
